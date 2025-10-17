@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>八位元二補碼互動教學（正確分步版）</title>
+<style>
+body{
+  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+  background:#f6f7f9;color:#222;text-align:center;margin:20px;
+}
+h1{color:#004a7f;}
+#bitContainer{
+  display:flex;justify-content:center;flex-wrap:wrap;
+  gap:8px;margin:20px 0;
+}
+.bit{
+  width:60px;height:70px;border-radius:6px;
+  background:#eee;display:flex;align-items:center;justify-content:center;
+  font-size:32px;font-weight:bold;cursor:pointer;
+  border:2px solid #aaa;transition:background 0.2s;
+}
+.bit.on{background:#0074d9;color:#fff;border-color:#0074d9;}
+button{
+  margin:6px;padding:10px 20px;font-size:15px;border:none;
+  border-radius:6px;background:#005a92;color:#fff;cursor:pointer;
+}
+button:hover{background:#0074d9;}
+#info{
+  margin-top:18px;font-size:18px;line-height:1.6;
+}
+.notice{
+  color:#d00;font-weight:bold;
+}
+@media(max-width:600px){
+  .bit{width:45px;height:55px;font-size:26px;}
+}
+</style>
+</head>
+<body>
+
+<h1>八位元二補碼互動教學（正確分步版）</h1>
+<p>請依步驟進行：1️⃣ 取反 → 2️⃣ 加 1。<br>未完成第 1 步無法進行第 2 步。</p>
+
+<div id="bitContainer"></div>
+
+<div>
+  <button id="invertBtn">第 1 步：取反 (Invert)</button>
+  <button id="addOneBtn">第 2 步：加 1 (Add 1)</button>
+  <button id="resetBtn">重設</button>
+</div>
+
+<div id="info"></div>
+
+<script>
+const container=document.getElementById("bitContainer");
+const info=document.getElementById("info");
+let bits=[0,0,0,0,0,0,0,0];
+let stage="normal"; // normal, inverted, final
+
+function renderBits(){
+  container.innerHTML="";
+  bits.forEach((bit,idx)=>{
+    const el=document.createElement("div");
+    el.className="bit"+(bit===1?" on":"");
+    el.textContent=bit;
+    el.title="位元 "+idx;
+    el.addEventListener("click",()=>{
+      bits[idx]=bits[idx]===0?1:0;
+      renderBits();updateInfo();
+    });
+    container.appendChild(el);
+  });
+}
+
+function toDecimal(bits){
+  const val=parseInt(bits.join(""),2);
+  return (val>127)?(val-256):val;
+}
+
+function updateInfo(msg=""){
+  let html="";
+  if(stage==="normal"){
+    html=`${msg}<br>目前二進制：<b>${bits.join("")}</b><br>十進制值：<b>${toDecimal(bits)}</b>`;
+  }else if(stage==="inverted"){
+    html=`${msg}<br>目前二進制：<b>${bits.join("")}</b><br><i>（這只是取反結果，還未加 1 ，所以不能直接當作負數）</i>`;
+  }else if(stage==="final"){
+    html=`${msg}<br>最終二進制（二補碼）：<b>${bits.join("")}</b><br>十進制值：<b>${toDecimal(bits)}</b>`;
+  }
+  info.innerHTML=html;
+}
+
+function invertAll(){
+  bits=bits.map(b=>b^1);
+  stage="inverted";
+  renderBits();
+  updateInfo("第 1 步：已取反所有位元。");
+}
+
+function addOne(){
+  // 🛑 防呆：未取反前禁止加1
+  if(stage!=="inverted"){
+    info.innerHTML=`<span class="notice">⚠️ 請先完成「第 1 步：取反」！</span><br>目前不能加 1。`;
+    return;
+  }
+  let carry=1;
+  for(let i=7;i>=0;i--){
+    const sum=bits[i]+carry;
+    bits[i]=sum%2;
+    carry=Math.floor(sum/2);
+  }
+  stage="final";
+  renderBits();
+  updateInfo("第 2 步：已加 1，完成二補碼。");
+}
+
+document.getElementById("invertBtn").addEventListener("click",invertAll);
+document.getElementById("addOneBtn").addEventListener("click",addOne);
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  bits=[0,0,0,0,0,0,0,0];
+  stage="normal";
+  renderBits();
+  updateInfo("已重設。");
+});
+
+renderBits();updateInfo();
+</script>
+
+</body>
+</html>
