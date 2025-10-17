@@ -9,8 +9,8 @@
 一個簡單易懂的網頁介面，用以說明 **「取反 + 加 1」** 的二補碼原理。  
 學生可手動點擊 bit 位、觀察 8 位元二進制在取反與加 1 後對應的十進制變化。  
 
-👉 [立即試玩 Demo （GitHub Pages 連結）](https://你的帳號.github.io/flipandadd1/)  
-*(請在上傳 GitHub Pages 後更新連結)*
+👉 [立即試玩 Demo （GitHub Pages 連結）](https://lct1995chaewon.github.io/8bit-binary-complement/)  
+
 
 ---
 
