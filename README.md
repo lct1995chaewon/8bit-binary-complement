@@ -83,4 +83,4 @@ All implemented using plain HTML, CSS, and JavaScript — no frame
 
 ---
 
-👩‍💻 Maintainer ：*你的名字*｜ [@你的 GitHub 帳號](https://github.com/你的帳號)
+👩‍💻 Maintainer ：*Lee CT*
